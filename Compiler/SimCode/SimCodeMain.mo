@@ -73,6 +73,7 @@ import CodegenCppHpcom;
 import CodegenXML;
 import CodegenJava;
 import CodegenJS;
+import CodegenHDL;
 import Config;
 import DAEUtil;
 import Debug;
@@ -754,6 +755,10 @@ algorithm
 
     case "Java" equation
       Tpl.tplNoret(CodegenJava.translateModel, simCode);
+    then ();
+
+    case "HDL" equation
+      Tpl.tplNoret(CodegenHDL.translateModel, simCode);
     then ();
 
     case "None"

@@ -341,6 +341,7 @@ if true then /* Suppress output */
     "../Template/CodegenFMUCppHpcom.mo",
     "../Template/CodegenJava.mo",
     "../Template/CodegenJS.mo",
+    "../Template/CodegenHDL.mo",
     "../Template/CodegenModelica.mo",
     "../Template/CodegenSparseFMI.mo",
     "../Template/CodegenUtilSimulation.mo",
