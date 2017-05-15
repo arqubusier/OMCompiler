@@ -52,13 +52,12 @@ end handleOde;
 template handleCref(DAE.ComponentRef ref)
 ""
 ::=
-<<
     match ref
-    case CREF_QUAL(ident=name) then 'name <%handleCref(ref)%>'
-
-    case CREF_IDENT(ident=name) then ''
+    case CREF_QUAL(ident=name, componentRef=cref ) then
+        '<%name%>.<%handleCref(cref)%>'
+    case CREF_IDENT(ident=name) then '<%name%>'
     else "no"
->>
+end handleCref;
 
 
 annotation(__OpenModelica_Interface="backend");
