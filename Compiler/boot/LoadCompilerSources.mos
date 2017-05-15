@@ -146,6 +146,7 @@ if true then /* Suppress output */
     "../Template/Tpl.mo",
     "../Template/TplParser.mo",
     "../Template/Unparsing.mo",
+    "../Template/Unparsing.mo",
 
   // "Global";
     "../Global/Global.mo",
@@ -331,6 +332,8 @@ if true then /* Suppress output */
     "../Template/SimCodeDump.mo",
     "../Template/TaskSystemDump.mo",
     "../Template/VisualXMLTpl.mo",
+
+    "../Template/DumpODE.mo",
 
     "../Util/AvlTree.mo",
     "../Util/AvlTreeString.mo",

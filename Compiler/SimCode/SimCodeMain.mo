@@ -91,6 +91,7 @@ import System;
 import Util;
 import BackendDump;
 import ExecStat;
+import DumpODE;
 
 public function createSimulationSettings
   input Real startTime;
@@ -728,6 +729,10 @@ algorithm
 
     case "Java" equation
       Tpl.tplNoret(CodegenJava.translateModel, simCode);
+    then ();
+
+    case "ODE" equation
+      Tpl.tplNoret(DumpODE.translateModel, simCode);
     then ();
 
     case "None"
