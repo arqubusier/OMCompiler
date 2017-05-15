@@ -3,6 +3,8 @@ package DumpODE
 import interface SimCodeTV;
 import ExpressionDumpTpl;
 
+//type Exp = DAE.Exp;
+
 template translateModel(SimCode simCode)
  "Generates graphviz for visiualizing the ode systems."
 ::=
@@ -105,9 +107,23 @@ template handleExpression(DAE.Exp exp)
     case PATTERN(__) then "Not Implemented: 2"
     case SUM(__) then "Not Implemented: 3"
     case BINARY(__) then '<%handleBinary(operator, exp1, exp2)%>'
-    case CREF(__) then '<%handleCref(componentRef)%>'
+    case UNARY(__)  then '<%handleUnary(operator, exp)%>'
+    case CREF(__)   then '<%handleCref(componentRef)%>'
+    case CALL(__)   then
+    <<
+    <%Absyn.pathString(path, '.', false)%>
+        (<%handleArgumentList(expLst, attr)%>)'
+    >>
     else "no rhs"
 end handleExpression;
+
+template handleArgumentList(list<Exp> expList, CallAttributes attrs)
+""
+::=
+    <<
+    <% (expList |> exp => '<%handleExpression(exp)%>,') %>
+    >>
+end handleArgumentList;
 
 template handleBinary(DAE.Operator operator, DAE.Exp exp1, DAE.Exp exp2)
 ""
@@ -119,12 +135,40 @@ template binopSymbol(DAE.Operator operator)
 ""
 ::=
     match operator
-    case ADD(__) then ' + '
-    case SUB(__) then ' - '
-    case MUL(__) then ' * '
-    case MUL(__) then ' * '
-    case DIV(__) then ' / '
+    case ADD(__)        then ' + '
+    case SUB(__)        then ' - '
+    case MUL(__)        then ' * '
+    case MUL(__)        then ' * '
+    case DIV(__)        then ' / '
+    case DIV(__)        then ' / '
+    case AND(__)        then ' and '
+    case OR(__)         then ' or '
+    case LESS(__)       then ' < '
+    case LESSEQ(__)     then ' <= '
+    case GREATER(__)    then ' > '
+    case GREATEREQ(__)  then ' >='
+    case EQUAL(__)      then ' = '
+    case NEQUAL(__)     then ' /= '
+    else "UNKNOWN BINARY OPERATOR"
+
 end binopSymbol;
+
+template handleUnary(Operator operator, Exp exp)
+""
+::=
+'<%unarySymbol(operator)%><%handleExpression(exp)%>'
+
+end handleUnary;
+
+template unarySymbol(DAE.Operator operator)
+""
+::=
+    match operator
+    case UMINUS(__)     then '-'
+    case UMINUS_ARR(__) then '-'
+    case NOT(__)        then '!'
+    else "UNKNOWN BINARY OPERATOR"
+end unarySymbol;
 
 annotation(__OpenModelica_Interface="backend");
 end DumpODE;
