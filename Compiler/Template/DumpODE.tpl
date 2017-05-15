@@ -76,7 +76,6 @@ template handleExpression(DAE.Exp exp)
     case BCONST(__) then '<%bool%>'
     case CLKCONST(__) then "Not Implemented: A"
     case ENUM_LITERAL(__) then "Not Implemented: B"
-    case UNARY(__) then "Not Implemented: C"
     case LBINARY(__) then "Not Implemented: D"
     case LUNARY(__) then "Not Implemented: E"
     case RELATION(__) then "Not Implemented: F"
