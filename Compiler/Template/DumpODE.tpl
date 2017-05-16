@@ -3,8 +3,6 @@ package DumpODE
 import interface SimCodeTV;
 import ExpressionDumpTpl;
 
-//type Exp = DAE.Exp;
-
 template translateModel(SimCode simCode)
  "Generates graphviz for visiualizing the ode systems."
 ::=
@@ -22,10 +20,11 @@ template simulationFile(SimCode simCode)
 ::=
 match simCode
 case SIMCODE(odeEquations=odes) then
-  <<
-        This is a dump of the ode system
-    <%handleOdeEquations(odes)%>
-  >>
+<<
+digraph ODE {
+  <%handleOdeEquations(odes)%>
+}
+>>
 end simulationFile;
 
 template handleOdeEquations(list<list<SimEqSystem>> odes)
@@ -47,10 +46,7 @@ template handleOde(SimEqSystem ode)
 match ode
 case SES_SIMPLE_ASSIGN(index=i,cref=ref,exp=exp) then
 <<
-    ODE!!!
-    index: <%i%>
-    name: <%handleCref(ref)%>
-    exp: <%handleExpression(exp)%>
+  "<%handleCref(ref)%>" -> <%handleExpression(exp)%>
 
 >>
 end handleOde;
@@ -127,27 +123,37 @@ end handleArgumentList;
 template handleBinary(DAE.Operator operator, DAE.Exp exp1, DAE.Exp exp2)
 ""
 ::=
-    '<%handleExpression(exp1)%> <%binopSymbol(operator)%> <%handleExpression(exp2)%>'
+  let exp_1 = handleExpression(exp1)
+  let exp_2 = handleExpression(exp2)
+  let binop_symbol = binopSymbol(operator)
+  let hash_input = exp_1 + binop_symbol + exp_2
+  let binop_unique = binop_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
+<<
+"<%binop_unique%>"
+"<%binop_unique%>" -> <%exp_1%>  [label="op A"]
+"<%binop_unique%>" [label="<%binop_symbol%>"]
+"<%binop_unique%>" -> <%exp_2%>
+>>
 end handleBinary;
 
 template binopSymbol(DAE.Operator operator)
 ""
 ::=
     match operator
-    case ADD(__)        then ' + '
-    case SUB(__)        then ' - '
-    case MUL(__)        then ' * '
-    case MUL(__)        then ' * '
-    case DIV(__)        then ' / '
-    case DIV(__)        then ' / '
-    case AND(__)        then ' and '
-    case OR(__)         then ' or '
-    case LESS(__)       then ' < '
-    case LESSEQ(__)     then ' <= '
-    case GREATER(__)    then ' > '
-    case GREATEREQ(__)  then ' >='
-    case EQUAL(__)      then ' = '
-    case NEQUAL(__)     then ' /= '
+    case ADD(__)        then '+'
+    case SUB(__)        then '-'
+    case MUL(__)        then '*'
+    case MUL(__)        then '*'
+    case DIV(__)        then '/'
+    case DIV(__)        then '/'
+    case AND(__)        then 'and'
+    case OR(__)         then 'or'
+    case LESS(__)       then '<'
+    case LESSEQ(__)     then '<='
+    case GREATER(__)    then '>'
+    case GREATEREQ(__)  then '>='
+    case EQUAL(__)      then '='
+    case NEQUAL(__)     then '/='
     else "UNKNOWN BINARY OPERATOR"
 
 end binopSymbol;
@@ -155,8 +161,13 @@ end binopSymbol;
 template handleUnary(Operator operator, Exp exp)
 ""
 ::=
-'<%unarySymbol(operator)%><%handleExpression(exp)%>'
-
+  let exp_ = handleExpression(exp)
+  let unary_symbol = unarySymbol(operator)
+  let hash_input = exp_ + unary_symbol
+  let unary_unique = unary_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
+<<"<%unary_unique%>" -> <%exp_%>>>
+//  "<%unary_unique%>" [label="<%unary_symbol%>"]
+//>>
 end handleUnary;
 
 template unarySymbol(DAE.Operator operator)
