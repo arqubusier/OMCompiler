@@ -44,9 +44,15 @@ template handleOde(SimEqSystem ode)
  ""
 ::=
 match ode
-case SES_SIMPLE_ASSIGN(index=i,cref=ref,exp=exp) then
+//case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, componentRef=ref), exp=exp) then
+//<<
+//  "<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
+//  <%handleExpression(exp)%> "<%handleCref(ref)%>"
+//>>
+case SES_SIMPLE_ASSIGN(cref=ref,exp=exp) then
 <<
-  "<%handleCref(ref)%>" -> <%handleExpression(exp)%>
+
+  <%handleExpression(exp)%> "<%handleCref(ref)%>"
 
 >>
 end handleOde;
@@ -66,17 +72,16 @@ template handleExpression(DAE.Exp exp)
 ""
 ::=
     match exp
-    case ICONST(__) then '<%integer%>'
-    case RCONST(__) then '<%real%>'
-    case SCONST(__) then '<%string%>'
-    case BCONST(__) then '<%bool%>'
+    case ICONST(__) then '<%integer%> ->'
+    case RCONST(__) then '<%real%> ->'
+    case SCONST(__) then '<%string%> ->'
+    case BCONST(__) then '<%bool%> ->'
     case CLKCONST(__) then "Not Implemented: A"
     case ENUM_LITERAL(__) then "Not Implemented: B"
     case LBINARY(__) then "Not Implemented: D"
     case LUNARY(__) then "Not Implemented: E"
     case RELATION(__) then "Not Implemented: F"
     case IFEXP(__) then "Not Implemented: G"
-    case CALL(__) then "Not Implemented: H"
     case RECORD(__) then "Not Implemented: I"
     case PARTEVALFUNCTION(__) then "Not Implemented: J"
     case ARRAY(__) then "Not Implemented: K"
@@ -103,11 +108,16 @@ template handleExpression(DAE.Exp exp)
     case SUM(__) then "Not Implemented: 3"
     case BINARY(__) then '<%handleBinary(operator, exp1, exp2)%>'
     case UNARY(__)  then '<%handleUnary(operator, exp)%>'
-    case CREF(__)   then '<%handleCref(componentRef)%>'
+    case CREF(__)   then '<%handleCref(componentRef)%> ->'
     case CALL(__)   then
+//-> <%handleArgumentList(expLst, attr)%>
     <<
-    <%Absyn.pathString(path, '.', false)%>
-        (<%handleArgumentList(expLst, attr)%>)'
+    <%
+      (expLst |> exp => <<
+       <%handleExpression(exp)%> sin
+       >>)
+    %>
+    sin ->
     >>
     else "no rhs"
 end handleExpression;
@@ -116,7 +126,7 @@ template handleArgumentList(list<Exp> expList, CallAttributes attrs)
 ""
 ::=
     <<
-    <% (expList |> exp => '<%handleExpression(exp)%>,') %>
+    <% (expList |> exp => '<%handleExpression(exp)%>') %>
     >>
 end handleArgumentList;
 
@@ -129,10 +139,9 @@ template handleBinary(DAE.Operator operator, DAE.Exp exp1, DAE.Exp exp2)
   let hash_input = exp_1 + binop_symbol + exp_2
   let binop_unique = binop_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
 <<
-"<%binop_unique%>"
-"<%binop_unique%>" -> <%exp_1%>  [label="op A"]
-"<%binop_unique%>" [label="<%binop_symbol%>"]
-"<%binop_unique%>" -> <%exp_2%>
+<%exp_1%> "<%binop_unique%>"[label="op A"]
+<%exp_2%> "<%binop_unique%>"
+"<%binop_unique%>"->
 >>
 end handleBinary;
 
@@ -165,9 +174,7 @@ template handleUnary(Operator operator, Exp exp)
   let unary_symbol = unarySymbol(operator)
   let hash_input = exp_ + unary_symbol
   let unary_unique = unary_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
-<<"<%unary_unique%>" -> <%exp_%>>>
-//  "<%unary_unique%>" [label="<%unary_symbol%>"]
-//>>
+<<<%exp_%>>>
 end handleUnary;
 
 template unarySymbol(DAE.Operator operator)
