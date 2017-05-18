@@ -121,6 +121,7 @@ template handleExpression(DAE.Exp exp)
        <%handleExpression(exp)%> <%p%>
        >>)
     %>
+    <%p%> [shape=box]
     <%p%> ->
     >>
     else "no rhs"
@@ -145,7 +146,7 @@ template handleBinary(DAE.Operator operator, DAE.Exp exp1, DAE.Exp exp2)
 <<
 <%exp_1%> "<%binop_unique%>"[label="op A"]
 <%exp_2%> "<%binop_unique%>"
-"<%binop_unique%>" [label="<%binop_symbol%>"]
+"<%binop_unique%>" [label="<%binop_symbol%>", shape=box]
 "<%binop_unique%>" ->
 >>
 end handleBinary;
@@ -181,7 +182,7 @@ template handleUnary(Operator operator, Exp exp)
   let unary_unique = unary_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
 <<
 <%exp_%> "<%unary_unique%>"
-"<%unary_unique%>" [label="<%unary_symbol%>"]
+"<%unary_unique%>" [label="<%unary_symbol%>", shape=box]
 "<%unary_unique%>" ->
 >>
 end handleUnary;
