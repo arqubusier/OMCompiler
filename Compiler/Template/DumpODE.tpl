@@ -85,9 +85,19 @@ template handleCref(DAE.ComponentRef ref)
     match ref
     case CREF_QUAL(ident=name, componentRef=cref ) then
         '<%name%>.<%handleCref(cref)%>'
-    case CREF_IDENT(ident=name) then '<%name%>'
+    case CREF_IDENT(ident=name, subscriptLst=subLst) then '<%name%><%handleSubscriptList(subLst)%>'
     else "no lhs"
 end handleCref;
+
+template handleSubscriptList(list<Subscript> subLst) ::=
+  <<<%(subLst |> subscript => '<%handleSubscript(subscript)%>')%>>>
+end handleSubscriptList;
+
+template handleSubscript(Subscript subscript) ::=
+  match subscript
+  case INDEX(exp=exp) then '[<%handleExpression(exp)%>]'
+  else ""
+end handleSubscript;
 
 //TODO: ENUM_LITERAL CLKCONST
 template handleExpression(DAE.Exp exp)
