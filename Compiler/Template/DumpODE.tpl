@@ -178,7 +178,11 @@ template handleUnary(Operator operator, Exp exp)
   let unary_symbol = unarySymbol(operator)
   let hash_input = exp_ + unary_symbol
   let unary_unique = unary_symbol + "_" + stringHashDjb2Mod(hash_input, 1057)
-<<<%exp_%>>>
+<<
+<%exp_%> "<%unary_unique%>"
+"<%unary_unique%>" [label="<%unary_symbol%>"]
+"<%unary_unique%>" ->
+>>
 end handleUnary;
 
 template unarySymbol(DAE.Operator operator)
