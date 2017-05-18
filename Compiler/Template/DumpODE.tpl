@@ -145,7 +145,8 @@ template handleBinary(DAE.Operator operator, DAE.Exp exp1, DAE.Exp exp2)
 <<
 <%exp_1%> "<%binop_unique%>"[label="op A"]
 <%exp_2%> "<%binop_unique%>"
-"<%binop_unique%>"->
+"<%binop_unique%>" [label="<%binop_symbol%>"]
+"<%binop_unique%>" ->
 >>
 end handleBinary;
 
