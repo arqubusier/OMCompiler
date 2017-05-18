@@ -95,7 +95,7 @@ end handleSubscriptList;
 
 template handleSubscript(Subscript subscript) ::=
   match subscript
-  case INDEX(exp=exp) then '[<%handleExpression(exp)%>]'
+  case INDEX(exp=ICONST(integer=integer)) then '[<%integer%>]'
   else ""
 end handleSubscript;
 
