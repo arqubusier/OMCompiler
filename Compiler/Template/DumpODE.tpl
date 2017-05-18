@@ -32,8 +32,9 @@ template handleModelInfo(ModelInfo modelInfo) ::=
   match modelInfo
   case MODELINFO(vars=SIMVARS(stateVars=stateVars, derivativeVars=derVars)) then
   <<
-    {rank=min; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
-    {rank=max; <%(derVars |> derVar => '"<%handleSimVar(derVar)%>" ' )%>}
+    {rank=source; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
+    {rank=same; <%(derVars |> derVar => '"<%handleSimVar(derVar)%>" ' )%>}
+    {rank=sink; <%(derVars |> derVar => '"euler_<%handleSimVar(derVar)%>" ' )%>}
   >>
   else "No modelInfo!"
 end handleModelInfo;
