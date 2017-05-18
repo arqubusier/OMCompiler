@@ -94,10 +94,10 @@ template handleExpression(DAE.Exp exp)
 ""
 ::=
     match exp
-    case ICONST(__) then '<%integer%> ->'
-    case RCONST(__) then '<%real%> ->'
-    case SCONST(__) then '<%string%> ->'
-    case BCONST(__) then '<%bool%> ->'
+    case ICONST(__) then '"<%integer%>" ->'
+    case RCONST(__) then '"<%real%>" ->'
+    case SCONST(__) then '"<%string%>" ->'
+    case BCONST(__) then '"<%bool%>" ->'
     case CLKCONST(__) then "Not Implemented: A"
     case ENUM_LITERAL(__) then "Not Implemented: B"
     case LBINARY(__) then "Not Implemented: D"
@@ -130,7 +130,7 @@ template handleExpression(DAE.Exp exp)
     case SUM(__) then "Not Implemented: 3"
     case BINARY(__) then '<%handleBinary(operator, exp1, exp2)%>'
     case UNARY(__)  then '<%handleUnary(operator, exp)%>'
-    case CREF(__)   then '<%handleCref(componentRef)%> ->'
+    case CREF(__)   then '"<%handleCref(componentRef)%>" ->'
     case CALL(__)   then
       let p = Absyn.pathString(path, ".", false)
       let expLst_ = handleArgumentList(expLst, attr)
