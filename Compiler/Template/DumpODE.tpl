@@ -83,8 +83,8 @@ template handleCref(DAE.ComponentRef ref)
 ""
 ::=
     match ref
-    case CREF_QUAL(ident=name, componentRef=cref ) then
-        '<%name%>.<%handleCref(cref)%>'
+    case CREF_QUAL(ident=name, componentRef=cref, subscriptLst=subLst) then
+        '<%name%><%handleSubscriptList(subLst)%>.<%handleCref(cref)%>'
     case CREF_IDENT(ident=name, subscriptLst=subLst) then '<%name%><%handleSubscriptList(subLst)%>'
     else "no lhs"
 end handleCref;
