@@ -62,15 +62,23 @@ template handleOde(SimEqSystem ode)
  ""
 ::=
 match ode
-case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, componentRef=ref), exp=exp) then
+case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, subscriptLst=subLst, componentRef=ref), exp=exp) then
+//  if (name == "$DER") then
 <<
 
-  "<%name%>.<%handleCref(ref)%>" -> "euler_<%name%>.<%handleCref(ref)%>"
-  "euler_<%name%>.<%handleCref(ref)%>" [label="E", shape=box]
-  "euler_<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
-  <%handleExpression(exp)%> "<%name%>.<%handleCref(ref)%>"
+  "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" -> "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
+  "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" [label="E", shape=box]
+  "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
+  <%handleExpression(exp)%> "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
 
 >>
+//  else
+//<<
+
+//  <%handleExpression(exp)%> "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
+
+//>>
+//  end if;
 case SES_SIMPLE_ASSIGN(cref=ref,exp=exp) then
 <<
 
