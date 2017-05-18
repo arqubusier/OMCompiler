@@ -110,14 +110,14 @@ template handleExpression(DAE.Exp exp)
     case UNARY(__)  then '<%handleUnary(operator, exp)%>'
     case CREF(__)   then '<%handleCref(componentRef)%> ->'
     case CALL(__)   then
-//-> <%handleArgumentList(expLst, attr)%>
+      let p = Absyn.pathString(path, ".", false)
     <<
     <%
       (expLst |> exp => <<
-       <%handleExpression(exp)%> sin
+       <%handleExpression(exp)%> <%p%>
        >>)
     %>
-    sin ->
+    <%p%> ->
     >>
     else "no rhs"
 end handleExpression;
