@@ -47,7 +47,9 @@ match ode
 case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, componentRef=ref), exp=exp) then
 <<
 
-  "<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
+  "<%name%>.<%handleCref(ref)%>" -> "euler_<%name%>.<%handleCref(ref)%>"
+  "euler_<%name%>.<%handleCref(ref)%>" [label="E", shape=box]
+  "euler_<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
   <%handleExpression(exp)%> "<%name%>.<%handleCref(ref)%>"
 
 >>
