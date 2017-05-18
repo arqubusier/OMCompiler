@@ -8,14 +8,14 @@ template translateModel(SimCode simCode)
 ::=
 match simCode
 case SIMCODE(modelInfo=modelInfo as MODELINFO(__)) then
-  let()= textFile(simulationFile(simCode), '<%fileNamePrefix%>_ODE.dot')
+  let()= textFile(simulationFile(simCode, modelInfo), '<%fileNamePrefix%>_ODE.dot')
      "" //empty result for true case
 
 end translateModel;
 
 
 
-template simulationFile(SimCode simCode)
+template simulationFile(SimCode simCode, ModelInfo modelInfo)
  "Generates graphviz for visiualizing the ode systems."
 ::=
 match simCode
@@ -23,9 +23,26 @@ case SIMCODE(odeEquations=odes) then
 <<
 digraph ODE {
   <%handleOdeEquations(odes)%>
+  <%handleModelInfo(modelInfo)%>
 }
 >>
 end simulationFile;
+
+template handleModelInfo(ModelInfo modelInfo) ::=
+  match modelInfo
+  case MODELINFO(vars=SIMVARS(stateVars=stateVars, derivativeVars=derVars)) then
+  <<
+    {rank=min; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
+    {rank=max; <%(derVars |> derVar => '"<%handleSimVar(derVar)%>" ' )%>}
+  >>
+  else "No modelInfo!"
+end handleModelInfo;
+
+template handleSimVar(SimVar stateVar) ::=
+  match stateVar
+  case SIMVAR(name=name) then '<%handleCref(name)%>'
+  else ""
+end handleSimVar;
 
 template handleOdeEquations(list<list<SimEqSystem>> odes)
  "OAEU"
