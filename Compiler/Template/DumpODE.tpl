@@ -133,14 +133,17 @@ template handleExpression(DAE.Exp exp)
     case CREF(__)   then '<%handleCref(componentRef)%> ->'
     case CALL(__)   then
       let p = Absyn.pathString(path, ".", false)
+      let expLst_ = handleArgumentList(expLst, attr)
+      let hash_input = p + expLst_
+      let call_unique = p + "_" + stringHashDjb2Mod(hash_input, 1057)
     <<
     <%
       (expLst |> exp => <<
-       <%handleExpression(exp)%> <%p%>
+       <%handleExpression(exp)%> <%call_unique%>
        >>)
     %>
-    <%p%> [shape=box]
-    <%p%> ->
+    "<%call_unique%>" [label="<%p%>", shape=box]
+    "<%call_unique%>" ->
     >>
     else "no rhs"
 end handleExpression;
