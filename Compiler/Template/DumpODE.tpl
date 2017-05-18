@@ -44,11 +44,13 @@ template handleOde(SimEqSystem ode)
  ""
 ::=
 match ode
-//case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, componentRef=ref), exp=exp) then
-//<<
-//  "<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
-//  <%handleExpression(exp)%> "<%handleCref(ref)%>"
-//>>
+case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, componentRef=ref), exp=exp) then
+<<
+
+  "<%name%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
+  <%handleExpression(exp)%> "<%name%>.<%handleCref(ref)%>"
+
+>>
 case SES_SIMPLE_ASSIGN(cref=ref,exp=exp) then
 <<
 
