@@ -30,11 +30,18 @@ end simulationFile;
 
 template handleModelInfo(ModelInfo modelInfo) ::=
   match modelInfo
-  case MODELINFO(vars=SIMVARS(stateVars=stateVars, derivativeVars=derVars)) then
+  case MODELINFO(vars=SIMVARS(stateVars=stateVars)) then
   <<
     {rank=source; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
-    {rank=same; <%(derVars |> derVar => '"<%handleSimVar(derVar)%>" ' )%>}
-    {rank=sink; <%(derVars |> derVar => '"euler_<%handleSimVar(derVar)%>" ' )%>}
+    <%(stateVars |> stateVar => <<
+                                "euler_$DER.<%handleSimVar(stateVar)%>" -> "<%handleSimVar(stateVar)%>"
+                                >> )%>
+    {rank=same; <%(stateVars |> stateVar => '"$DER.<%handleSimVar(stateVar)%>" ' )%>}
+    <%(stateVars |> stateVar => <<
+                            "$DER.<%handleSimVar(stateVar)%>" -> "euler_$DER.<%handleSimVar(stateVar)%>"
+                            "euler_$DER.<%handleSimVar(stateVar)%>" [label="E", shape=box]
+                            >> )%>
+    {rank=sink; <%(stateVars |> stateVar => '"euler_$DER.<%handleSimVar(stateVar)%>" ' )%>}
   >>
   else "No modelInfo!"
 end handleModelInfo;
@@ -62,23 +69,6 @@ template handleOde(SimEqSystem ode)
  ""
 ::=
 match ode
-case SES_SIMPLE_ASSIGN(cref=CREF_QUAL(ident=name, subscriptLst=subLst, componentRef=ref), exp=exp) then
-//  if (name == "$DER") then
-<<
-
-  "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" -> "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
-  "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" [label="E", shape=box]
-  "euler_<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>" -> "<%handleCref(ref)%>"
-  <%handleExpression(exp)%> "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
-
->>
-//  else
-//<<
-
-//  <%handleExpression(exp)%> "<%name%><%handleSubscriptList(subLst)%>.<%handleCref(ref)%>"
-
-//>>
-//  end if;
 case SES_SIMPLE_ASSIGN(cref=ref,exp=exp) then
 <<
 
