@@ -30,18 +30,25 @@ end simulationFile;
 
 template handleModelInfo(ModelInfo modelInfo) ::=
   match modelInfo
-  case MODELINFO(vars=SIMVARS(stateVars=stateVars)) then
+  case MODELINFO(vars=SIMVARS(stateVars=stateVars, paramVars=paramVars)) then
   <<
-    {rank=source; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
+  //    {rank=source; <%(stateVars |> stateVar => '"<%handleSimVar(stateVar)%>" ' )%>}
+  //    <%(stateVars |> stateVar => <<
+  //                              "euler_$DER.<%handleSimVar(stateVar)%>" -> "<%handleSimVar(stateVar)%>"
+  //                              >> )%>
+  //    {rank=same; <%(stateVars |> stateVar => '"$DER.<%handleSimVar(stateVar)%>" ' )%>}
     <%(stateVars |> stateVar => <<
-                                "euler_$DER.<%handleSimVar(stateVar)%>" -> "<%handleSimVar(stateVar)%>"
+                                "$DER.<%handleSimVar(stateVar)%>" -> "euler_$DER.<%handleSimVar(stateVar)%>"
+                                "euler_$DER.<%handleSimVar(stateVar)%>" [label="E", shape=box]
                                 >> )%>
-    {rank=same; <%(stateVars |> stateVar => '"$DER.<%handleSimVar(stateVar)%>" ' )%>}
-    <%(stateVars |> stateVar => <<
-                            "$DER.<%handleSimVar(stateVar)%>" -> "euler_$DER.<%handleSimVar(stateVar)%>"
-                            "euler_$DER.<%handleSimVar(stateVar)%>" [label="E", shape=box]
-                            >> )%>
-    {rank=sink; <%(stateVars |> stateVar => '"euler_$DER.<%handleSimVar(stateVar)%>" ' )%>}
+  //    {rank=sink; <%(stateVars |> stateVar => '"euler_$DER.<%handleSimVar(stateVar)%>" ' )%>}
+
+  <%(paramVars |> paramVar => <<
+                             "<%handleSimVar(paramVar)%>" [color=blue]
+                             >>)%>
+  <%(stateVars |> stateVar => <<
+                             "<%handleSimVar(stateVar)%>" [color=red]
+                             >>)%>
   >>
   else "No modelInfo!"
 end handleModelInfo;
@@ -58,7 +65,13 @@ template handleOdeEquations(list<list<SimEqSystem>> odes)
 <<
     <%
         (odes |> odes2 => (
-                '<% ( odes2 |> ode => ('<%handleOde(ode)%>') )%>'
+			   '<% ( odes2 |> ode hasindex cluster_i => <<
+				subgraph cluster_<%cluster_i%>{
+				color=blue;
+                                <%handleOde(ode)%>
+                                }
+
+				>> )%>'
             )
         )
     %>
